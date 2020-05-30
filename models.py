@@ -4,6 +4,7 @@ import torch.nn as nn
 rdc_text_dim = 1000
 z_dim = 100
 h_dim = 4096
+bottleneck_dim = 256
 
 class _param:
     def __init__(self):
@@ -18,13 +19,17 @@ class _netG(nn.Module):
         self.rdc_text = nn.Linear(text_dim, rdc_text_dim)
         self.main = nn.Sequential(nn.Linear(z_dim + rdc_text_dim, h_dim),
                                   nn.LeakyReLU(),
-                                  nn.Linear(h_dim, X_dim),
+                                  nn.Linear(h_dim, bottleneck_dim),
+                                  nn.LeakyReLU())
+        self.head = nn.Sequential(nn.Linear(bottleneck_dim, X_dim),
                                   nn.Tanh())
 
     def forward(self, z, c):
         rdc_text = self.rdc_text(c)
         input = torch.cat([z, rdc_text], 1)
-        output = self.main(input)
+        bottleneck = self.main(input)
+        output = self.head(bottleneck)
+
         return output
 
 
