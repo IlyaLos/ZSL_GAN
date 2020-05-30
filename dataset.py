@@ -6,7 +6,7 @@ import sys
 
 class LoadDataset(object):
     def __init__(self, opt):
-        txt_feat_path = 'data/CUB2011/CUB_Porter_7551D_TFIDF_new.mat'
+        txt_feat_path = 'data/CUB2011/new_tfidf.npy'
         if opt.splitmode == 'easy':
             train_test_split_dir = 'data/CUB2011/train_test_split_easy.mat'
             pfc_label_path_train = 'data/CUB2011/labels_train.pkl'
@@ -148,14 +148,13 @@ class FeatDataLayer(object):
         return blobs
 
 
-def get_text_feature(dir, train_test_split_dir):
+def get_text_feature(tfidf_path, train_test_split_dir):
     train_test_split = sio.loadmat(train_test_split_dir)
     # get training text feature
     train_cid = train_test_split['train_cid'].squeeze()
-    text_feature = sio.loadmat(dir)['PredicateMatrix']
+    text_feature = np.load(tfidf_path)
     train_text_feature = text_feature[train_cid - 1]  # 0-based index
     # get testing text feature
     test_cid = train_test_split['test_cid'].squeeze()
-    text_feature = sio.loadmat(dir)['PredicateMatrix']
     test_text_feature = text_feature[test_cid - 1]  # 0-based index
     return train_text_feature.astype(np.float32), test_text_feature.astype(np.float32)
