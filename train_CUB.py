@@ -109,7 +109,7 @@ def train():
     optimizerD = optim.Adam(netD.parameters(), lr=opt.lr, betas=(0.5, 0.9))
     optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(0.5, 0.9))
 
-    for it in range(start_step, 3000+1):
+    for it in range(start_step, 10000+1):
         """ Discriminator """
         for _ in range(5):
             blobs = data_layer.forward()
